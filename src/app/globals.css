@@ -271,16 +271,6 @@
     background-clip: text;
   }
   
-  /* Gallery Styling */
-  .masonry-grid {
-    column-gap: 1.5rem;
-  }
-  
-  .masonry-item {
-    break-inside: avoid;
-    margin-bottom: 1.5rem;
-  }
-  
   /* Custom animations */
   .fade-in {
     animation: fadeIn 0.3s ease-in-out;

@@ -10,13 +10,13 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Button } from '@/components/ui/button';
 import { Loader2, Plus } from 'lucide-react';
 import { getUser, signOut, signInWithProvider, signInWithEmail } from '@/lib/auth';
-import { PaywallModal } from '@/components/PaywallModal';
 import { useGate } from '@/hooks/useGate';
 import { trackAuthStart, trackAuthSuccess, trackAuthError } from '@/lib/analytics';
 import { toast } from 'react-hot-toast';
 import type { AuthProvider } from '@/lib/auth';
 
 const SubmissionForm = lazy(() => import('@/components/submission-form').then(module => ({ default: module.SubmissionForm })));
+const PaywallModal = lazy(() => import('@/components/PaywallModal').then(module => ({ default: module.PaywallModal })));
 
 export default function Home() {
   const [filteredAssets, setFilteredAssets] = useState<Asset[]>([]);
@@ -83,7 +83,9 @@ export default function Home() {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-          }
+          },
+          cache: 'force-cache',
+          next: { revalidate: 300 } // Cache for 5 minutes
         });
         
         if (!response.ok) {
@@ -247,7 +249,7 @@ export default function Home() {
             Get 200+ Proven B2B Design Templates. See What Works. Copy What Converts.
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-body">
-            Join free to access premium templates and see what&apos;s working in B2B design.
+            Join free to access premium templates and fresh B2B design inspiration.
           </p>
           <div className="flex flex-col gap-4 justify-center items-center max-w-md mx-auto">
             {!user ? (
@@ -393,14 +395,18 @@ export default function Home() {
       </div>
 
       {/* Paywall Modal */}
-      <PaywallModal
-        isOpen={shouldShowModal}
-        onClose={hideModal}
-        onAuthStart={handleProviderAuth}
-        onEmailAuth={handleEmailAuth}
-        source="list"
-        intendedUrl="/"
-      />
+      {shouldShowModal && (
+        <Suspense fallback={<div />}>
+          <PaywallModal
+            isOpen={shouldShowModal}
+            onClose={hideModal}
+            onAuthStart={handleProviderAuth}
+            onEmailAuth={handleEmailAuth}
+            source="list"
+            intendedUrl="/"
+          />
+        </Suspense>
+      )}
     </>
   );
 }

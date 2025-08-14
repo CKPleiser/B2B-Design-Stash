@@ -54,11 +54,11 @@ export function UnlockCTA({
         <div className="flex items-center justify-center mb-4">
           <Sparkles className="h-6 w-6 text-blue-600 mr-2" />
           <span className="text-xl font-bold text-slate-900">
-            More designs await
+            See all 25+ Designs
           </span>
         </div>
         <p className="text-slate-700 mb-6 text-lg leading-relaxed max-w-lg mx-auto">
-          Sign in free to see all templates and resources in the stash.
+          Unlock the complete stash of premium B2B design inspiration. It&apos;s free.
         </p>
         <Button
           onClick={onClick}
@@ -67,7 +67,7 @@ export function UnlockCTA({
           size="lg"
         >
           <Lock className="h-5 w-5 mr-2" />
-          Unlock Full Access
+          🔓 Get Full Access
         </Button>
       </div>
     );

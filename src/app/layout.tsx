@@ -8,19 +8,25 @@ import "./globals.css";
 const inter = Inter({ 
   subsets: ["latin"],
   variable: "--font-inter",
-  weight: ["400", "500", "600"]
+  weight: ["400", "500", "600"],
+  display: "swap",
+  preload: true
 });
 
 const kumbhSans = Kumbh_Sans({ 
   subsets: ["latin"],
   variable: "--font-kumbh",
-  weight: ["400", "500", "600", "700"]
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  preload: true
 });
 
 const lato = Lato({ 
   subsets: ["latin"],
   variable: "--font-lato",
-  weight: ["400", "700"]
+  weight: ["400", "700"],
+  display: "swap",
+  preload: true
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://b2b-design-stash.vercel.app";
@@ -95,10 +101,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://nocodb.designbuffs.com" />
         <link rel="dns-prefetch" href="https://designbuffs.com" />
-        <link rel="icon" href="/design-buffs-icon.jpeg" sizes="any" />
-        <link rel="apple-touch-icon" href="/design-buffs-icon.jpeg" />
+        <link rel="preload" href="/design-buffs-logo.png" as="image" type="image/png" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="format-detection" content="telephone=no" />
       </head>
       <body className={`${inter.variable} ${kumbhSans.variable} ${lato.variable} antialiased`} suppressHydrationWarning={true}>
         <Providers>
