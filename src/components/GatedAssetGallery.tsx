@@ -9,7 +9,6 @@ import { GatedAssetCard } from './GatedAssetCard';
 import { AssetModal } from './asset-modal';
 import { PaywallModal } from './PaywallModal';
 import { UnlockCTA } from './UnlockCTA';
-import { StickyUnlockBar } from './StickyUnlockBar';
 import { useGate } from '@/hooks/useGate';
 import { useAuth } from '@/hooks/useAuth';
 import { signInWithProvider, signInWithEmail } from '@/lib/auth';
@@ -24,7 +23,6 @@ interface GatedAssetGalleryProps {
 
 export function GatedAssetGallery({ assets }: GatedAssetGalleryProps) {
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const [showStickyBar, setShowStickyBar] = useState(false);
   const { isAuthenticated } = useAuth();
   
   const {
@@ -49,21 +47,6 @@ export function GatedAssetGallery({ assets }: GatedAssetGalleryProps) {
   // Calculate visible items based on gate configuration
   const visibleCount = isAuthenticated ? assets.length : gate.getVisibleItemsCount(assets.length);
 
-  // Track scroll position for sticky bar
-  useEffect(() => {
-    if (isAuthenticated) return;
-
-    const handleScroll = () => {
-      const scrolledItems = window.scrollY > window.innerHeight * 0.5; // 50% page height
-      const seenItemsRatio = Math.min(visibleCount / assets.length, 0.4); // 40% of items
-      const shouldShowBar = scrolledItems || seenItemsRatio >= 0.4;
-      
-      setShowStickyBar(shouldShowBar);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isAuthenticated, visibleCount, assets.length]);
   // Separate DB assets (always visible) from regular assets
   const dbAssets = assets.filter(asset => asset.made_by_db);
   const regularAssets = assets.filter(asset => !asset.made_by_db);
@@ -233,13 +216,6 @@ export function GatedAssetGallery({ assets }: GatedAssetGalleryProps) {
         intendedUrl="/"
       />
 
-      {/* Sticky Unlock Bar */}
-      <StickyUnlockBar
-        isVisible={showStickyBar}
-        onUnlock={showModal}
-        totalCount={assets.length}
-        freeCount={visibleCount}
-      />
     </>
   );
 }

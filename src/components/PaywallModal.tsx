@@ -90,7 +90,7 @@ export function PaywallModal({
       <DialogContent 
         ref={modalRef}
         className={cn(
-          "max-w-md mx-4 p-8 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700",
+          "max-w-md mx-4 p-8 bg-white rounded-xl shadow-lg border border-slate-200",
           "focus:outline-none",
           className
         )}
@@ -104,10 +104,10 @@ export function PaywallModal({
         <div className="text-center space-y-6">
           {/* Header */}
           <div className="space-y-3">
-            <DialogTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            <DialogTitle className="text-2xl font-bold text-slate-900">
               Get 200+ Proven B2B Design Templates
             </DialogTitle>
-            <DialogDescription className="text-slate-600 dark:text-slate-400 text-base">
+            <DialogDescription className="text-slate-600 text-base">
               Join 5,000+ designers. Sign up free to unlock the full stash.
             </DialogDescription>
           </div>

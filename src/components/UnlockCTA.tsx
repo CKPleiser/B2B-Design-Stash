@@ -58,7 +58,7 @@ export function UnlockCTA({
           </span>
         </div>
         <p className="text-slate-700 mb-6 text-lg leading-relaxed max-w-lg mx-auto">
-          Unlock the complete stash of premium B2B design inspiration. It&apos;s free.
+          Unlock the complete stash of premium B2B design inspiration. <br/>It&apos;s free.
         </p>
         <Button
           onClick={onClick}
@@ -67,7 +67,7 @@ export function UnlockCTA({
           size="lg"
         >
           <Lock className="h-5 w-5 mr-2" />
-          🔓 Get Full Access
+          Get Full Access
         </Button>
       </div>
     );
