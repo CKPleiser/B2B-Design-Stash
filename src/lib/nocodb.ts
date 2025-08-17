@@ -34,8 +34,13 @@ class NocoDBService {
       // Build filter conditions
       const whereConditions: string[] = [];
       
-      // Always filter for approved assets
-      whereConditions.push('(approved,eq,1)');
+      // In development mode, show all assets including unapproved ones
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      
+      // Only filter for approved assets in production
+      if (!isDevelopment) {
+        whereConditions.push('(approved,eq,1)');
+      }
       
       if (filters?.category && filters.category !== 'all') {
         whereConditions.push(`(category,eq,${filters.category})`);
@@ -63,6 +68,9 @@ class NocoDBService {
       if (whereConditions.length > 0) {
         urlObj.searchParams.set('where', whereConditions.join('~and'));
       }
+      
+      // Set a higher limit to get more assets
+      urlObj.searchParams.set('limit', '1000');
       
       const url = urlObj.toString();
 
@@ -284,8 +292,15 @@ class NocoDBService {
   // Get a single asset by ID
   async getAssetById(id: string): Promise<Asset | null> {
     try {
+      const isDevelopment = process.env.NODE_ENV === 'development';
       const urlObj = new URL(this.baseURL);
-      urlObj.searchParams.set('where', `(Id,eq,${id})~and(approved,eq,1)`);
+      
+      // In development, show all assets; in production, only approved ones
+      if (isDevelopment) {
+        urlObj.searchParams.set('where', `(Id,eq,${id})`);
+      } else {
+        urlObj.searchParams.set('where', `(Id,eq,${id})~and(approved,eq,1)`);
+      }
       
       const response = await fetch(urlObj.toString(), {
         headers: this.headers,
@@ -311,9 +326,17 @@ class NocoDBService {
   // Get a single asset by slug
   async getAssetBySlug(slug: string): Promise<Asset | null> {
     try {
-      // First, try to get all approved assets (we'll need to generate slugs to match)
+      // First, fetch all assets with a high limit to ensure we get all of them
       const urlObj = new URL(this.baseURL);
-      urlObj.searchParams.set('where', '(approved,eq,1)');
+      
+      // Set a high limit to get all assets (adjust if you have more than 1000)
+      urlObj.searchParams.set('limit', '1000');
+      
+      // Remove any offset to start from the beginning
+      urlObj.searchParams.delete('offset');
+      
+      // In development mode, show all assets including unapproved ones
+      const isDevelopment = process.env.NODE_ENV === 'development';
       
       const response = await fetch(urlObj.toString(), {
         headers: this.headers,
@@ -329,7 +352,26 @@ class NocoDBService {
         // Transform all assets and find the one with matching slug
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const assets = data.list.map((item: any) => this.transformAssetData(item));
-        return assets.find((asset: Asset) => asset.slug === slug) || null;
+        const asset = assets.find((asset: Asset) => asset.slug === slug) || null;
+        
+        // If we found an asset, check if it should be shown based on approval status
+        if (asset) {
+          // In production, only show approved assets
+          if (!isDevelopment && !asset.approved) {
+            console.log(`Asset found but not approved: ${asset.title} (ID: ${asset.id}, approved: ${asset.approved})`);
+            return null;
+          }
+          
+          // Log if we found an unapproved asset in development
+          if (!asset.approved && isDevelopment) {
+            console.log(`[DEV] Showing unapproved asset: ${asset.title} (ID: ${asset.id}, approved: ${asset.approved})`);
+          }
+          
+          console.log(`Asset found: ${asset.title} (ID: ${asset.id}, approved: ${asset.approved}, slug: ${asset.slug})`);
+          return asset;
+        } else {
+          console.log(`No asset found with slug: ${slug}`);
+        }
       }
       
       return null;
@@ -433,13 +475,16 @@ class NocoDBService {
     const id = item.Id || item.id;
     const title = item.title || '';
     const company = item.company || '';
+    const category = item.category || '';
+    const tags = item.tags ? item.tags.split(',').map((tag: string) => tag.trim()) : [];
+    const primaryTag = tags.length > 0 ? tags[0] : undefined;
     
     return {
       id: id,
       title: title,
       company: company,
-      category: item.category,
-      tags: item.tags ? item.tags.split(',').map((tag: string) => tag.trim()) : [],
+      category: category,
+      tags: tags,
       industry_tags: item.industry_tags || undefined,
       design_style: item.design_style ? (Array.isArray(item.design_style) ? item.design_style : item.design_style.split(',').map((style: string) => style.trim())) : [],
       file_url: this.extractFileUrl(item.file_url),
@@ -448,7 +493,8 @@ class NocoDBService {
       created_at: item.created_at || new Date().toISOString(),
       added_by: item.added_by,
       approved: Boolean(item.approved),
-      slug: generateSlug(title, company, id),
+      // Use slug from database if available, otherwise generate SEO-friendly slug
+      slug: item.slug || generateSlug(title, company, id, category, primaryTag),
       notes: item.notes || item.Notes || undefined, // Handle both lowercase and capitalized field names
       view_count: item.view_count || item.views || 0, // Handle view count field
     };
@@ -464,44 +510,73 @@ class NocoDBService {
       if (fileData.startsWith('http://') || fileData.startsWith('https://')) {
         return fileData;
       }
-      // If it's a path, construct the full URL
-      return `https://nocodb.designbuffs.com/${fileData}`;
+      // If it's a path, construct the full URL with proper endpoint
+      // Check if it looks like a storage path
+      if (fileData.startsWith('download/') || fileData.startsWith('dltemp/')) {
+        return `https://nocodb.designbuffs.com/${fileData}`;
+      }
+      // Otherwise use the storage endpoint
+      return `https://nocodb.designbuffs.com/storage/${fileData}`;
     }
     
     // If it's an array (NocoDB attachment format)
     if (Array.isArray(fileData) && fileData.length > 0) {
       const file = fileData[0];
+      
+      // Try different possible URL fields in order of preference
+      // signedUrl is the most recent field name for temporary signed URLs
+      if (file.signedUrl) {
+        return file.signedUrl;
+      }
+      
+      if (file.url) {
+        return file.url;
+      }
+      
       if (file.signedPath) {
-        // signedPath might already include domain or be relative
+        // signedPath is always relative, needs the domain prepended
         if (file.signedPath.startsWith('http://') || file.signedPath.startsWith('https://')) {
           return file.signedPath;
         }
+        // NocoDB signed paths start with dltemp/ or similar
         return `https://nocodb.designbuffs.com/${file.signedPath}`;
-      } else if (file.path) {
-        // path might already include domain or be relative
+      }
+      
+      if (file.path) {
+        // Regular path (not signed) - use download endpoint
         if (file.path.startsWith('http://') || file.path.startsWith('https://')) {
           return file.path;
         }
-        return `https://nocodb.designbuffs.com/${file.path}`;
-      } else if (file.url) {
-        // Some NocoDB versions use 'url' field
-        return file.url;
+        // For regular paths that start with 'download/', keep as is
+        if (file.path.startsWith('download/')) {
+          return `https://nocodb.designbuffs.com/${file.path}`;
+        }
+        // Otherwise use storage endpoint
+        return `https://nocodb.designbuffs.com/storage/${file.path}`;
       }
     }
     
-    // If it's an object with path property
+    // If it's an object with URL properties
+    if (fileData.signedUrl) {
+      return fileData.signedUrl;
+    }
+    
+    if (fileData.url) {
+      return fileData.url;
+    }
+    
     if (fileData.signedPath) {
       if (fileData.signedPath.startsWith('http://') || fileData.signedPath.startsWith('https://')) {
         return fileData.signedPath;
       }
       return `https://nocodb.designbuffs.com/${fileData.signedPath}`;
-    } else if (fileData.path) {
+    }
+    
+    if (fileData.path) {
       if (fileData.path.startsWith('http://') || fileData.path.startsWith('https://')) {
         return fileData.path;
       }
-      return `https://nocodb.designbuffs.com/${fileData.path}`;
-    } else if (fileData.url) {
-      return fileData.url;
+      return `https://nocodb.designbuffs.com/storage/${fileData.path}`;
     }
     
     console.warn('Could not extract file URL from:', fileData);

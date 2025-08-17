@@ -105,6 +105,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="format-detection" content="telephone=no" />
+        <script defer data-domain="stash.designbuffs.com" src="https://plausible.designbuffs.com/js/script.js"></script>
       </head>
       <body className={`${inter.variable} ${kumbhSans.variable} ${lato.variable} antialiased`} suppressHydrationWarning={true}>
         <Providers>

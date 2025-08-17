@@ -84,8 +84,7 @@ export default function Home() {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          cache: 'force-cache',
-          next: { revalidate: 300 } // Cache for 5 minutes
+          cache: 'no-store', // Don't cache on client to ensure fresh signed URLs
         });
         
         if (!response.ok) {
@@ -204,7 +203,7 @@ export default function Home() {
               onClick={() => setShowSubmissionForm(!showSubmissionForm)}
             >
               <Plus className="h-4 w-4 mr-1" />
-              Get Your Work Featured
+              Share Your Work
             </Button>
             
             {/* User Menu */}
@@ -246,10 +245,10 @@ export default function Home() {
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-5xl font-headline font-bold mb-4 text-balance leading-tight text-brand-contrast">
-            Get 200+ Proven B2B Design Templates. See What Works. Copy What Converts.
+            B2B Design So Good, You&apos;ll Want to &apos;Borrow&apos; It
           </h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-body">
-            Join free to access premium templates and fresh B2B design inspiration.
+            Curated B2B design that&apos;ll make you say &apos;why didn&apos;t we think of that?&apos;
           </p>
           <div className="flex flex-col gap-4 justify-center items-center max-w-md mx-auto">
             {!user ? (
@@ -259,7 +258,7 @@ export default function Home() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   onClick={showModal}
                 >
-                  🔓 Unlock Full Stash (Free)
+                  🔓 Unlock Full Stash (it&apos;s free)
                 </Button>
                 
                 <Button
@@ -267,7 +266,7 @@ export default function Home() {
                   className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg text-sm"
                   onClick={() => setShowSubmissionForm(true)}
                 >
-                  Get Your Work Featured
+                  Share Your Work
                 </Button>
               </>
             ) : (
@@ -277,10 +276,10 @@ export default function Home() {
                   className="w-full bg-green-600 hover:bg-green-700 text-white text-lg font-semibold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   onClick={() => setShowSubmissionForm(true)}
                 >
-                  ✨ Get Your Work Featured
+                  ✨ Share Your Work
                 </Button>
                 <p className="text-lg text-gray-700 font-medium">
-                  Share your best work with 5,000+ designers
+                  Share your best work with 5,000+ b2b marketers & design teams
                 </p>
               </>
             )}
@@ -364,7 +363,7 @@ export default function Home() {
               className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-12 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
               onClick={() => setShowSubmissionForm(true)}
             >
-              ✨ Get Your Work Featured
+              ✨ Share Your Work
             </Button>
             <p className="text-sm text-green-700 mt-3 font-medium">
               You&apos;re signed in! Ready to share your best work?
@@ -387,7 +386,7 @@ export default function Home() {
           </div>
           <div className="pt-4 border-t border-gray-200 text-center">
             <p className="text-xs text-gray-400 font-body">
-              © 2024 Design Buffs.
+              © 2025 Design Buffs.
             </p>
           </div>
         </div>

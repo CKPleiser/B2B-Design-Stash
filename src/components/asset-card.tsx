@@ -65,10 +65,13 @@ export function AssetCard({ asset, onClick, showModal = false }: AssetCardProps)
                   unoptimized={true}
                   priority={false}
                   onError={(e) => {
+                    console.warn(`Image load failed for ${asset.title}, URL might be expired:`, asset.file_url);
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
+                      // Check if this might be an expired signed URL issue
+                      const isSignedUrl = asset.file_url.includes('dltemp/') || asset.file_url.includes('expires=');
                       parent.innerHTML = `
                         <div class="flex h-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
                           <div class="text-center">
@@ -77,10 +80,14 @@ export function AssetCard({ asset, onClick, showModal = false }: AssetCardProps)
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
                             </div>
-                            <p class="text-xs text-gray-500">Image unavailable</p>
+                            <p class="text-xs text-gray-500">${isSignedUrl ? 'Image expired - Refresh page' : 'Image unavailable'}</p>
                           </div>
                         </div>
                       `;
+                      // If it's likely an expired URL, suggest a page refresh
+                      if (isSignedUrl) {
+                        console.info('Detected possible expired signed URL. User should refresh the page for fresh URLs.');
+                      }
                     }
                   }}
                 />
@@ -105,6 +112,12 @@ export function AssetCard({ asset, onClick, showModal = false }: AssetCardProps)
               <div>
                 <h3 className="font-semibold text-gray-900 line-clamp-2 leading-tight mb-1">
                   {asset.title}
+                  {/* Show pending indicator in development mode */}
+                  {process.env.NODE_ENV === 'development' && !asset.approved && (
+                    <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">
+                      Pending
+                    </span>
+                  )}
                 </h3>
                 <p className="text-sm text-gray-600">{asset.company}</p>
               </div>

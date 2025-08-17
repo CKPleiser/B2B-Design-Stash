@@ -1,0 +1,206 @@
+{
+  "updated": 25,
+  "skipped": 1,
+  "errors": 0,
+  "slugs": [
+    {
+      "id": 2,
+      "title": "Hockeystack’s New Team Member",
+      "company": "Hockeystack",
+      "category": "internal comms",
+      "primaryTag": "hr",
+      "slug": "hockeystacks-new-team-member-hr-internal-comms-hockeystack-2"
+    },
+    {
+      "id": 3,
+      "title": "Lunio Event Announcement",
+      "company": "Lunio",
+      "category": "events & conferences",
+      "primaryTag": "events",
+      "slug": "lunio-event-announcement-events-events-conferences-lunio-3"
+    },
+    {
+      "id": 4,
+      "title": "Turtle Content Performance Matters",
+      "company": "Turtl",
+      "category": "social media",
+      "primaryTag": "linkedin",
+      "slug": "turtle-content-performance-matters-linkedin-social-media-4"
+    },
+    {
+      "id": 5,
+      "title": "Find the right CRM ",
+      "company": "Pipedrive",
+      "category": "social media",
+      "primaryTag": "linkedin",
+      "slug": "find-right-crm-linkedin-social-media-pipedrive-5"
+    },
+    {
+      "id": 6,
+      "title": "Gong Just Following Up",
+      "company": "Gong",
+      "category": "social media",
+      "primaryTag": "linkedin",
+      "slug": "gong-just-following-up-linkedin-social-media-gong-6"
+    },
+    {
+      "id": 7,
+      "title": "Otter.ai Case Study",
+      "company": "Otter.ai",
+      "category": "sales enablement",
+      "primaryTag": "case study",
+      "slug": "otterai-case-study-sales-enablement-otterai-7"
+    },
+    {
+      "id": 8,
+      "title": "Yesware Drip Campaign Checklist",
+      "company": "Yesware",
+      "category": "content marketing",
+      "primaryTag": "content marketing",
+      "slug": "yesware-drip-campaign-checklist-content-marketing-yesware-8"
+    },
+    {
+      "id": 9,
+      "title": "AskQ HR Ads",
+      "company": "AskQ",
+      "category": "internal comms",
+      "primaryTag": "hr",
+      "slug": "askq-hr-ads-internal-comms-askq-9"
+    },
+    {
+      "id": 10,
+      "title": "Evolge Go Image Ads",
+      "company": "Practice Evolve",
+      "category": "brand identity",
+      "primaryTag": "legal",
+      "slug": "evolge-go-image-ads-legal-brand-identity-practice-evolve-10"
+    },
+    {
+      "id": 11,
+      "title": "AskQ Landing Page",
+      "company": "AskQ ",
+      "category": "web design",
+      "primaryTag": "legal",
+      "slug": "askq-landing-page-legal-web-design-askq-11"
+    },
+    {
+      "id": 12,
+      "title": "Clean and simple webinar invite",
+      "company": "Freshworks",
+      "category": "events & conferences",
+      "primaryTag": "webinar",
+      "slug": "clean-simple-webinar-invite-events-conferences-freshworks-12"
+    },
+    {
+      "id": 14,
+      "title": "Sequel Promo Animation",
+      "company": "Sequel",
+      "category": "marketing materials",
+      "primaryTag": "animation",
+      "slug": "sequel-promo-animation-marketing-materials-sequel-14"
+    },
+    {
+      "id": 15,
+      "title": "Otter.ai for Sales",
+      "company": "Otter.ai",
+      "category": "sales enablement",
+      "slug": "otterai-sales-sales-enablement-otterai-15"
+    },
+    {
+      "id": 16,
+      "title": "LinkedIn Ads Carousel Post",
+      "company": "Truax Marketing",
+      "category": "social media",
+      "primaryTag": "linkedin",
+      "slug": "linkedin-ads-carousel-post-social-media-truax-marketing-16"
+    },
+    {
+      "id": 17,
+      "title": "Axora Case Study",
+      "company": "Axora",
+      "category": "sales enablement",
+      "primaryTag": "case study",
+      "slug": "axora-case-study-sales-enablement-axora-17"
+    },
+    {
+      "id": 18,
+      "title": "WHD Educational Programs",
+      "company": "World Health Dental",
+      "category": "marketing materials",
+      "primaryTag": "brochure",
+      "slug": "whd-educational-programs-brochure-marketing-materials-world-18"
+    },
+    {
+      "id": 19,
+      "title": "T-Pulse Case Study",
+      "company": "Detect Technologies",
+      "category": "sales enablement",
+      "primaryTag": "case study",
+      "slug": "t-pulse-case-study-sales-enablement-detect-technologies-19"
+    },
+    {
+      "id": 20,
+      "title": "Sapphire Staff Manual",
+      "company": "Sapphire",
+      "category": "brand identity",
+      "primaryTag": "internal",
+      "slug": "sapphire-staff-manual-internal-brand-identity-sapphire-20"
+    },
+    {
+      "id": 22,
+      "title": "Still manually reconciling?",
+      "company": "Ledge",
+      "category": "marketing materials",
+      "primaryTag": "linkedin",
+      "slug": "still-manually-reconciling-linkedin-marketing-materials-22"
+    },
+    {
+      "id": 23,
+      "title": "With Ledge it's automatic",
+      "company": "Ledge",
+      "category": "marketing materials",
+      "primaryTag": "linkedin",
+      "slug": "ledge-its-automatic-linkedin-marketing-materials-ledge-23"
+    },
+    {
+      "id": 24,
+      "title": "Save nearly 2 days per week",
+      "company": "Asana",
+      "category": "web design",
+      "primaryTag": "linkedin",
+      "slug": "save-nearly-2-days-linkedin-web-design-asana-24"
+    },
+    {
+      "id": 25,
+      "title": "High priority work done on time",
+      "company": "Asana",
+      "category": "web design",
+      "primaryTag": "linkedin",
+      "slug": "high-priority-work-done-linkedin-web-design-asana-25"
+    },
+    {
+      "id": 26,
+      "title": "Save more time with Asana",
+      "company": "Asana",
+      "category": "web design",
+      "primaryTag": "linkedin",
+      "slug": "save-more-time-asana-linkedin-web-design-asana-26"
+    },
+    {
+      "id": 27,
+      "title": "Capchase vs traditional financing",
+      "company": "Capchase",
+      "category": "web design",
+      "primaryTag": "linkedin",
+      "slug": "capchase-vs-traditional-financing-linkedin-web-design-27"
+    },
+    {
+      "id": 28,
+      "title": "AutomatePro Plus Sub Brand Identity",
+      "company": "AutomatePro",
+      "category": "brand identity",
+      "primaryTag": "brand identity",
+      "slug": "automatepro-plus-sub-brand-brand-identity-automatepro-28"
+    }
+  ]
+}

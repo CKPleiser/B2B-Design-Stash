@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { nocoDBService } from '@/lib/nocodb';
 
-export const revalidate = 300; // Revalidate every 5 minutes
+export const revalidate = 60; // Revalidate every minute to ensure fresh signed URLs
 export const dynamic = 'force-dynamic'; // Force dynamic for search functionality
 
 export async function GET(request: NextRequest) {
@@ -23,10 +23,10 @@ export async function GET(request: NextRequest) {
 
     const response = NextResponse.json(assets);
     
-    // Add caching headers
-    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
-    response.headers.set('CDN-Cache-Control', 'public, s-maxage=300');
-    response.headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=300');
+    // Reduce cache duration to ensure signed URLs don't expire
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=30');
+    response.headers.set('CDN-Cache-Control', 'public, s-maxage=60');
+    response.headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=60');
     
     return response;
   } catch (error) {

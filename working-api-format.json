@@ -1,0 +1,15 @@
+{
+  "url": "https://nocodb.designbuffs.com/api/v2/tables/ml1s3e6w8vz94qg/records",
+  "method": "PATCH",
+  "bodyFormat": "bulk",
+  "example": {
+    "url": "https://nocodb.designbuffs.com/api/v2/tables/ml1s3e6w8vz94qg/records",
+    "method": "PATCH",
+    "body": [
+      {
+        "Id": 1,
+        "slug": "test-slug"
+      }
+    ]
+  }
+}
