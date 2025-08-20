@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FileText, Eye, Sparkles } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface AssetCardProps {
   asset: Asset;
@@ -14,7 +16,27 @@ interface AssetCardProps {
 }
 
 export function AssetCard({ asset, onClick, showModal = false }: AssetCardProps) {
+  const router = useRouter();
+  const [imageError, setImageError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const isPDF = asset.file_url.toLowerCase().endsWith('.pdf');
+
+  const handleImageError = useCallback(() => {
+    console.warn(`Image load failed for ${asset.title}, URL might be expired:`, asset.file_url);
+    
+    // Check if this might be an expired signed URL
+    const isSignedUrl = asset.file_url.includes('dltemp/') || asset.file_url.includes('expires=') || asset.file_url.includes('X-Amz-Expires');
+    
+    if (isSignedUrl && retryCount === 0) {
+      // First failure with a signed URL - refresh to get fresh URLs
+      console.info('Detected possible expired signed URL. Refreshing for fresh URLs.');
+      setRetryCount(1);
+      router.refresh();
+    } else {
+      // Either not a signed URL or already retried - show error
+      setImageError(true);
+    }
+  }, [asset.file_url, asset.title, retryCount, router]);
 
   const handleClick = () => {
     if (showModal && onClick) {
@@ -56,41 +78,30 @@ export function AssetCard({ asset, onClick, showModal = false }: AssetCardProps)
               </div>
             ) : (
               <>
-                <Image
-                  src={asset.file_url}
-                  alt={asset.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  unoptimized={true}
-                  priority={false}
-                  onError={(e) => {
-                    console.warn(`Image load failed for ${asset.title}, URL might be expired:`, asset.file_url);
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    const parent = target.parentElement;
-                    if (parent) {
-                      // Check if this might be an expired signed URL issue
-                      const isSignedUrl = asset.file_url.includes('dltemp/') || asset.file_url.includes('expires=');
-                      parent.innerHTML = `
-                        <div class="flex h-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                          <div class="text-center">
-                            <div class="bg-white rounded-full p-4 shadow-md mb-2">
-                              <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <p class="text-xs text-gray-500">${isSignedUrl ? 'Image expired - Refresh page' : 'Image unavailable'}</p>
-                          </div>
-                        </div>
-                      `;
-                      // If it's likely an expired URL, suggest a page refresh
-                      if (isSignedUrl) {
-                        console.info('Detected possible expired signed URL. User should refresh the page for fresh URLs.');
-                      }
-                    }
-                  }}
-                />
+                {imageError ? (
+                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+                    <div className="text-center">
+                      <div className="bg-white rounded-full p-4 shadow-md mb-2">
+                        <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <p className="text-xs text-gray-500">Image unavailable</p>
+                    </div>
+                  </div>
+                ) : (
+                  <Image
+                    key={`${asset.file_url}-${retryCount}`}
+                    src={asset.file_url}
+                    alt={asset.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    unoptimized={true}
+                    priority={false}
+                    onError={handleImageError}
+                  />
+                )}
                 {/* Gradient Overlay for better text visibility */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </>

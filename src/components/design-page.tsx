@@ -18,8 +18,9 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUser, signOut } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 interface DesignPageProps {
   asset: Asset;
@@ -111,11 +112,13 @@ function RecommendationCard({ asset }: RecommendationCardProps) {
 }
 
 export function DesignPageComponent({ asset, prevSwipe, nextSwipe, recommendations = [] }: DesignPageProps) {
+  const router = useRouter();
   const [shareSuccess, setShareSuccess] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [user, setUser] = useState<{ email?: string } | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const isPDF = asset.file_url.toLowerCase().includes('.pdf');
 
   // Check if user is authenticated
@@ -198,11 +201,27 @@ export function DesignPageComponent({ asset, prevSwipe, nextSwipe, recommendatio
     });
   };
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     console.warn('Image failed to load:', imageUrl);
-    setImageError(true);
-    setImageLoading(false);
-  };
+    
+    // Check if this might be an expired signed URL
+    const isSignedUrl = imageUrl.includes('dltemp/') || imageUrl.includes('expires=') || imageUrl.includes('X-Amz-Expires');
+    
+    if (isSignedUrl && retryCount === 0) {
+      // First failure with a signed URL - refresh the page to get fresh URLs
+      console.info('Detected possible expired signed URL. Refreshing page for fresh URLs.');
+      setRetryCount(1);
+      // Use router.refresh() to refresh server components and get fresh data
+      router.refresh();
+      // Also reset the loading state to show loader while refreshing
+      setImageLoading(true);
+      setImageError(false);
+    } else {
+      // Either not a signed URL or already retried - show error
+      setImageError(true);
+      setImageLoading(false);
+    }
+  }, [imageUrl, retryCount, router]);
 
   const handleImageLoad = () => {
     setImageLoading(false);
@@ -321,6 +340,7 @@ export function DesignPageComponent({ asset, prevSwipe, nextSwipe, recommendatio
                       </div>
                     ) : (
                       <Image
+                        key={`${imageUrl}-${retryCount}`}
                         src={imageUrl}
                         alt={`${asset.title} - ${asset.category} design by ${brandName}`}
                         width={800}
